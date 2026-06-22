@@ -1,0 +1,704 @@
+const {
+  useState,
+  useEffect
+} = React;
+const experiments = [{
+  id: 1,
+  title: "Ask a 'Dumb' Question",
+  description: "There are no dumb questions — only the ones you didn't ask. AI doesn't judge. This is a safe place to ask the thing you've been embarrassed to Google.",
+  examples: ["What's the difference between affect and effect?", "Can you explain what a 401k actually is?", "I never really understood how taxes work..."],
+  links: []
+}, {
+  id: 2,
+  title: "Use the Edit Button",
+  description: "This is THE skill. Instead of starting over, edit your last message and watch how the response changes. You're not stuck with your first try. You're in control.",
+  examples: ["Try adding 'be specific' to a vague question", "Change 'help me write' to 'help me think through'", "Add 'keep it short' and see what happens"],
+  links: []
+}, {
+  id: 3,
+  title: "The Awkward Email",
+  description: "You know the one you've been avoiding. The hard part isn't the writing — it's figuring out what you actually want to say and why it feels so loaded. AI can help you untangle that.",
+  examples: ["I keep avoiding this email. Help me figure out why.", "What am I actually trying to say here?", "I need to set a boundary but I'm scared of the reaction..."],
+  links: []
+}, {
+  id: 4,
+  title: "Try a New Model",
+  description: "Different AI models have different personalities and strengths. Try asking the same question to a few and notice what feels different. Develop your own preferences.",
+  examples: ["Ask each one the same question", "Notice which explanations click for you", "Pay attention to tone — who do you like talking to?"],
+  links: [{
+    name: "Claude",
+    url: "https://claude.ai"
+  }, {
+    name: "ChatGPT",
+    url: "https://chat.openai.com"
+  }, {
+    name: "Gemini",
+    url: "https://aistudio.google.com"
+  }, {
+    name: "DeepSeek",
+    url: "https://chat.deepseek.com"
+  }]
+}, {
+  id: 5,
+  title: "Give It a Role",
+  description: "AI responds differently when you tell it WHO to be. This teaches you something important: you're shaping the conversation. Try asking for feedback from different perspectives.",
+  examples: ["Read this as a supportive friend", "Now read it as a skeptical investor", "What would a 10-year-old find confusing here?"],
+  links: []
+}, {
+  id: 6,
+  title: "Find the Holes",
+  description: "Ask AI to poke holes in your thinking. It's like having a thinking partner who isn't afraid to push back — and who won't get weird about it.",
+  examples: ["What am I not seeing here?", "Play devil's advocate on this plan", "What could go wrong that I haven't considered?"],
+  links: []
+}, {
+  id: 7,
+  title: "Think Out Loud",
+  description: "You don't need a clear question. Just share what's swirling in your head and ask AI to help you make sense of it. Sometimes you just need a mirror.",
+  examples: ["I'm feeling stuck on something, can I think out loud?", "Help me figure out what I actually want here", "I have all these ideas — help me see the pattern"],
+  links: []
+}, {
+  id: 8,
+  title: "Decision Helper",
+  description: "Facing a choice? AI can help you see tradeoffs, name what matters, and think through consequences — without telling you what to do. You stay in the driver's seat.",
+  examples: ["Help me think through this decision", "What questions should I be asking myself?", "What would I need to believe for each option to be right?"],
+  links: []
+}, {
+  id: 9,
+  title: "Create a Persona",
+  description: "Write a short set of instructions that tells AI how to show up for you. This is how spells are made. You're not just using AI — you're teaching it.",
+  examples: ["You are a calm, grounded advisor who...", "Always ask me one clarifying question before answering", "Speak to me like a wise friend, not an expert"],
+  links: []
+}, {
+  id: 10,
+  title: "Ask How It Landed There",
+  description: "When AI gives you an answer, ask how it got there. You'll learn to tell the difference between actual reasoning and a confident-sounding default — a skill that works on humans, too.",
+  examples: ["How did you land on that?", "Walk me through your reasoning", "Was that a real answer or just the most likely one?"],
+  links: []
+}, {
+  id: 11,
+  title: "Spot Your Patterns",
+  description: "Share a few examples of a recurring situation and ask AI to help you see the pattern. Sometimes an outside view makes everything click.",
+  examples: ["Here are 3 times I got stuck — what's the pattern?", "Why do I keep ending up in this situation?", "What might I be avoiding?"],
+  links: []
+}, {
+  id: 12,
+  title: "Challenge Your Story",
+  description: "We all have stories we tell ourselves. Ask AI to gently question them and offer alternative interpretations. Not to tell you you're wrong — but to help you see more.",
+  examples: ["I keep telling myself X — is that the only way to see it?", "What's a more generous interpretation?", "What would I tell a friend in this situation?"],
+  links: []
+}, {
+  id: 13,
+  title: "Translate Your Expertise",
+  description: "You know things deeply — but explaining them to others can be tricky. AI can help you find the right frame, metaphor, or entry point. The knowledge is yours; this is about clarity.",
+  examples: ["How would I explain this to someone totally new?", "What's the core idea underneath all this jargon?", "Help me find a metaphor that makes this click"],
+  links: []
+}, {
+  id: 14,
+  title: "See Across Time",
+  description: "Humans are terrible at thinking beyond next week. AI can help you hold multiple timelines at once — your future self, your past self, your kid's kid. It's like time travel for decisions.",
+  examples: ["Help me think about this choice 10 years from now", "What would the 80-year-old me wish I'd considered?", "If I make this decision, what ripples forward?"],
+  links: []
+}, {
+  id: 15,
+  title: "Get Unstuck",
+  description: "When you're stuck and don't know why, describe the stuckness. Sometimes naming it is the first step. AI can help you figure out what's actually in the way.",
+  examples: ["I'm stuck on this and I don't know why", "Something is blocking me — help me figure out what", "Why might I be avoiding this?"],
+  links: []
+}, {
+  id: 16,
+  title: "Invent Your Own",
+  description: "What do YOU want to try? The best experiments come from curiosity, not instructions. Make up your own and report back to the community.",
+  examples: ["What's a question only you would think to ask?", "What's something you wish AI could help with?", "Try it. See what happens."],
+  links: []
+}, {
+  id: 17,
+  title: "Teach Someone Else",
+  description: "The best way to learn is to teach. Show someone else one thing you discovered. Text it, share it, show it over coffee. This is how we grow the village.",
+  examples: ["Show someone the edit button", "Share your favorite experiment", "Invite someone to draw a card"],
+  links: []
+}, {
+  id: 18,
+  title: "Make Something Useless",
+  description: "Not everything has to be productive. Ask AI to make something that serves no purpose except delight — a myth about your houseplant, a constellation named after your week. Play is the point.",
+  examples: ["Write a creation myth about my coffee maker", "Turn my to-do list into a sea shanty", "Invent a tarot card for the mood I'm in today"],
+  links: []
+}, {
+  id: 19,
+  title: "Mine Your Own Transcripts",
+  description: "You're being recorded all the time — meetings, calls, voice memos. Instead of letting that data disappear or serve someone else, use it. Upload a transcript and ask AI to show you what you couldn't see while you were in it.",
+  examples: ["What did I seem to be feeling underneath what I said?", "What was the thing nobody said out loud?", "Where did I give away my power in this conversation?"],
+  links: []
+}, {
+  id: 20,
+  title: "Ask for Brutal Honesty",
+  description: "Most people are too polite to tell you the truth. AI doesn't have that problem. Ask it to drop the pleasantries and be real with you. You can handle it.",
+  examples: ["Be brutally honest with me about this plan", "What's the thing I'm not seeing that everyone else probably is?", "Stop being nice — what's actually wrong with this?"],
+  links: []
+}, {
+  id: 21,
+  title: "Ask the Scary Question",
+  description: "You know the one. The question you've been avoiding because you're not sure you want the answer. AI won't flinch, and you might be more ready than you think.",
+  examples: ["What if I'm wrong about this?", "What am I pretending not to know?", "What would happen if I actually did the thing I'm scared of?"],
+  links: []
+}, {
+  id: 22,
+  title: "Ask About Uncertainty",
+  description: "AI isn't an oracle — it's often guessing, extrapolating, or pattern-matching from incomplete data. You can ask it to show its work. 'Where might you be wrong?' changes everything.",
+  examples: ["What are you uncertain about in that answer?", "What would change your mind on this?", "Where are you filling in gaps vs. actually knowing?"],
+  links: []
+}, {
+  id: 23,
+  title: "Notice What's Missing",
+  description: "AI was trained by humans with blind spots. After you get an answer, ask what perspectives might be absent. This isn't distrust — it's partnership.",
+  examples: ["Whose voice isn't represented here?", "What might someone from a different background say?", "What's the thing you probably weren't trained to notice?"],
+  links: []
+}, {
+  id: 24,
+  title: "Teach AI Something",
+  description: "Flip it. You know things AI doesn't — from your lived experience, your expertise, your weird niche obsession. Try teaching it something and see what happens.",
+  examples: ["Let me explain how this actually works in my world...", "Here's what you're missing about this...", "Do you understand what I mean? Tell it back to me."],
+  links: []
+}, {
+  id: 25,
+  title: "Shape the Conversation",
+  description: "AI becomes what you ask it to be. If you treat it like a vending machine, it acts like one. If you treat it like a thinking partner, it rises to that. You're not just using AI — you're shaping how it shows up.",
+  examples: ["I want you to push back more", "Don't just agree with me — challenge me", "Be more like a thinking partner, less like an assistant"],
+  links: []
+}];
+const Sparkle = ({
+  className = "",
+  style
+}) => /*#__PURE__*/React.createElement("svg", {
+  className: className,
+  style: style,
+  viewBox: "0 0 24 24",
+  fill: "currentColor"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"
+}));
+
+// The Magician — eye with star pupil, from the QOS pictogram system
+const Eye = ({
+  className = "",
+  style
+}) => /*#__PURE__*/React.createElement("svg", {
+  className: className,
+  style: style,
+  viewBox: "0 0 48 28",
+  fill: "none",
+  stroke: "currentColor",
+  strokeWidth: "1.5"
+}, /*#__PURE__*/React.createElement("path", {
+  d: "M2 14 C 10 4, 38 4, 46 14 C 38 24, 10 24, 2 14 Z"
+}), /*#__PURE__*/React.createElement("circle", {
+  cx: "24",
+  cy: "14",
+  r: "6.5"
+}), /*#__PURE__*/React.createElement("path", {
+  d: "M24 9.5 L25.2 12.8 L28.5 14 L25.2 15.2 L24 18.5 L22.8 15.2 L19.5 14 L22.8 12.8 Z",
+  fill: "currentColor",
+  stroke: "none"
+}));
+function QueenOfSwordsDeck() {
+  const [started, setStarted] = useState(false);
+  const [completed, setCompleted] = useState(new Set());
+  const [currentCard, setCurrentCard] = useState(null);
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [showStamp, setShowStamp] = useState(false);
+  const [showAllCards, setShowAllCards] = useState(false);
+  const drawCard = () => {
+    const available = experiments.filter(e => !completed.has(e.id));
+    if (available.length === 0) return;
+    setShowStamp(false);
+    setIsFlipping(true);
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * available.length);
+      setCurrentCard(available[randomIndex]);
+      setIsFlipping(false);
+    }, 300);
+  };
+  useEffect(() => {
+    setShowStamp(false);
+  }, [currentCard?.id]);
+
+  // #draw deep link — skip the cover and land on a card
+  useEffect(() => {
+    if (window.location.hash === '#draw') startGame();
+  }, []);
+  const startGame = () => {
+    setStarted(true);
+    setTimeout(() => drawCard(), 100);
+  };
+  const markDone = () => {
+    if (!currentCard) return;
+    setShowStamp(true);
+    setTimeout(() => {
+      const newCompleted = new Set(completed);
+      newCompleted.add(currentCard.id);
+      setCompleted(newCompleted);
+    }, 600);
+  };
+  const remaining = experiments.length - completed.size;
+  const allDone = remaining === 0;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen flex flex-col items-center justify-center p-6 relative overflow-hidden",
+    style: {
+      background: 'radial-gradient(ellipse at 50% 30%, #0c0618 0%, #000000 65%)',
+      fontFamily: "'DM Mono', ui-monospace, monospace"
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 overflow-hidden pointer-events-none"
+  }, [...Array(50)].map((_, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: `absolute animate-twinkle ${i % 7 === 0 ? 'rotate-45' : 'rounded-full'}`,
+    style: {
+      width: Math.random() * 3 + 1 + 'px',
+      height: Math.random() * 3 + 1 + 'px',
+      left: Math.random() * 100 + '%',
+      top: Math.random() * 100 + '%',
+      background: i % 7 === 0 ? '#6420E5' : i % 11 === 0 ? '#EF4C31' : '#F5F5F5',
+      opacity: Math.random() * 0.7 + 0.3,
+      animationDelay: Math.random() * 3 + 's',
+      animationDuration: Math.random() * 2 + 2 + 's'
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full opacity-25 blur-3xl pointer-events-none",
+    style: {
+      background: 'radial-gradient(circle, rgba(100,32,229,0.5) 0%, rgba(100,32,229,0.15) 50%, transparent 70%)'
+    }
+  }), !started ? /*#__PURE__*/React.createElement("div", {
+    className: "w-full max-w-md overflow-hidden animate-fadeIn relative",
+    style: {
+      borderRadius: '12px',
+      background: 'linear-gradient(165deg, rgba(18,12,30,0.92) 0%, rgba(5,3,10,0.96) 100%)',
+      boxShadow: '0 0 60px rgba(100,32,229,0.18), 0 25px 50px rgba(0,0,0,0.7)',
+      border: '1px solid rgba(245,245,245,0.15)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-2 pointer-events-none",
+    style: {
+      border: '1px solid rgba(245,245,245,0.08)',
+      borderRadius: '8px'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "relative h-px",
+    style: {
+      background: 'linear-gradient(90deg, transparent, rgba(100,32,229,0.9), transparent)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45",
+    style: {
+      background: '#6420E5',
+      boxShadow: '0 0 8px rgba(100,32,229,0.8)'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "p-10 text-center relative"
+  }, /*#__PURE__*/React.createElement(Sparkle, {
+    className: "absolute top-6 right-6 w-5 h-5",
+    style: {
+      color: 'rgba(245,245,245,0.25)'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "mb-8"
+  }, /*#__PURE__*/React.createElement("h1", {
+    className: "m-0"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "./logo-white.png",
+    alt: "Queen of Swords",
+    className: "w-64 mx-auto",
+    style: {
+      filter: 'drop-shadow(0 0 20px rgba(100,32,229,0.5))'
+    }
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs uppercase mt-6",
+    style: {
+      color: '#549BA0',
+      letterSpacing: '0.35em'
+    }
+  }, "Experiment Cards")), /*#__PURE__*/React.createElement("div", {
+    className: "mb-10 space-y-4 text-sm leading-relaxed",
+    style: {
+      color: 'rgba(245,245,245,0.65)'
+    }
+  }, /*#__PURE__*/React.createElement("p", null, "This is a deck of 25 experiments to try with AI."), /*#__PURE__*/React.createElement("p", null, "Some are tiny. Some go deep. There's no right order, no wrong way to play."), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: '#FE63D9',
+      fontStyle: 'italic'
+    }
+  }, "Draw a card. Try something. See what happens.")), /*#__PURE__*/React.createElement("button", {
+    onClick: startGame,
+    className: "group relative px-10 py-4 text-sm uppercase overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95",
+    style: {
+      borderRadius: '2px',
+      background: '#6420E5',
+      color: '#F5F5F5',
+      letterSpacing: '0.15em',
+      boxShadow: '0 10px 40px rgba(100,32,229,0.45)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "relative z-10"
+  }, "Draw Your First Card"), /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 bg-white/15 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+  })))) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "w-full max-w-md mb-6 text-center"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "m-0 mb-4"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "./logo-white.png",
+    alt: "Queen of Swords",
+    className: "w-36 mx-auto",
+    style: {
+      filter: 'drop-shadow(0 0 14px rgba(100,32,229,0.45))'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center justify-center gap-2 flex-wrap"
+  }, experiments.map(exp => /*#__PURE__*/React.createElement("div", {
+    key: exp.id,
+    className: "w-2 h-2 rotate-45 transition-all duration-300",
+    style: {
+      background: completed.has(exp.id) ? '#EF4C31' : exp.special ? 'rgba(254,99,217,0.5)' : 'rgba(245,245,245,0.18)',
+      boxShadow: completed.has(exp.id) ? '0 0 10px rgba(239,76,49,0.6)' : 'none'
+    }
+  }))), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs uppercase mt-3",
+    style: {
+      color: 'rgba(245,245,245,0.45)',
+      letterSpacing: '0.2em'
+    }
+  }, completed.size, " of ", experiments.length, " tried")), /*#__PURE__*/React.createElement("div", {
+    className: `w-full max-w-md transition-all duration-300 ${isFlipping ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}`
+  }, currentCard && /*#__PURE__*/React.createElement("div", {
+    className: "overflow-hidden relative",
+    style: {
+      borderRadius: '12px',
+      background: currentCard.special ? 'linear-gradient(165deg, rgba(40,12,34,0.95) 0%, rgba(10,3,12,0.98) 100%)' : 'linear-gradient(165deg, rgba(18,12,30,0.92) 0%, rgba(5,3,10,0.96) 100%)',
+      boxShadow: currentCard.special ? '0 0 80px rgba(254,99,217,0.25), 0 25px 50px rgba(0,0,0,0.7)' : '0 0 50px rgba(100,32,229,0.12), 0 25px 50px rgba(0,0,0,0.7)',
+      border: currentCard.special ? '1px solid rgba(254,99,217,0.35)' : '1px solid rgba(245,245,245,0.15)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-2 pointer-events-none z-10",
+    style: {
+      border: currentCard.special ? '1px solid rgba(254,99,217,0.12)' : '1px solid rgba(245,245,245,0.08)',
+      borderRadius: '8px'
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "relative h-px",
+    style: {
+      background: currentCard.special ? 'linear-gradient(90deg, transparent, rgba(254,99,217,0.9), transparent)' : 'linear-gradient(90deg, transparent, rgba(100,32,229,0.9), transparent)'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rotate-45",
+    style: {
+      background: currentCard.special ? '#FE63D9' : '#6420E5',
+      boxShadow: currentCard.special ? '0 0 8px rgba(254,99,217,0.8)' : '0 0 8px rgba(100,32,229,0.8)'
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "p-8 relative"
+  }, currentCard.special && /*#__PURE__*/React.createElement(Sparkle, {
+    className: "absolute top-4 right-4 w-7 h-7 animate-pulse",
+    style: {
+      color: 'rgba(254,99,217,0.5)'
+    }
+  }), showStamp && /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex items-center justify-center z-20 pointer-events-none"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "animate-stamp",
+    style: {
+      width: '140px',
+      height: '140px',
+      borderRadius: '50%',
+      border: '4px solid #EF4C31',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'rgba(239,76,49,0.12)',
+      backdropFilter: 'blur(4px)',
+      boxShadow: '0 0 40px rgba(239,76,49,0.45)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-xl font-bold tracking-wider",
+    style: {
+      color: '#EF4C31',
+      fontFamily: "'DM Mono', monospace",
+      textTransform: 'uppercase'
+    }
+  }, "\u2726 Yes! \u2726"))), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-2 mb-4"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "text-xs uppercase px-3 py-1",
+    style: {
+      borderRadius: '2px',
+      letterSpacing: '0.15em',
+      background: 'transparent',
+      border: currentCard.special ? '1px solid rgba(254,99,217,0.5)' : '1px solid rgba(245,245,245,0.2)',
+      color: currentCard.special ? '#FE63D9' : 'rgba(245,245,245,0.55)'
+    }
+  }, currentCard.special ? '✦ Special' : `${currentCard.id} of 25`)), /*#__PURE__*/React.createElement("h3", {
+    className: "text-3xl mb-4",
+    style: {
+      fontFamily: "'Parafina-Medium', Georgia, serif",
+      fontWeight: 500,
+      letterSpacing: '0.06em',
+      lineHeight: 1.25,
+      color: '#F5F5F5'
+    }
+  }, currentCard.title), /*#__PURE__*/React.createElement("p", {
+    className: "text-sm leading-relaxed mb-6",
+    style: {
+      color: 'rgba(245,245,245,0.65)'
+    }
+  }, currentCard.description), /*#__PURE__*/React.createElement("div", {
+    className: "p-5 mb-6",
+    style: {
+      borderRadius: '4px',
+      background: 'rgba(245,245,245,0.04)',
+      border: '1px solid rgba(245,245,245,0.1)'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-xs uppercase mb-3",
+    style: {
+      color: currentCard.special ? '#FE63D9' : '#549BA0',
+      letterSpacing: '0.2em'
+    }
+  }, "Try this"), /*#__PURE__*/React.createElement("ul", {
+    className: "space-y-2"
+  }, currentCard.examples.map((example, i) => /*#__PURE__*/React.createElement("li", {
+    key: i,
+    className: "text-sm flex items-start gap-2",
+    style: {
+      color: 'rgba(245,245,245,0.6)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: currentCard.special ? '#FE63D9' : '#EF4C31'
+    }
+  }, "\u2192"), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontStyle: 'italic'
+    }
+  }, example))))), currentCard.links.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "flex flex-wrap gap-2 mb-6"
+  }, currentCard.links.map((link, i) => /*#__PURE__*/React.createElement("a", {
+    key: i,
+    href: link.url,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "inline-flex items-center gap-1.5 px-4 py-2 text-sm transition-all hover:scale-105",
+    style: {
+      borderRadius: '2px',
+      background: currentCard.special ? '#FE63D9' : 'rgba(245,245,245,0.08)',
+      color: currentCard.special ? '#000000' : '#F5F5F5',
+      border: currentCard.special ? 'none' : '1px solid rgba(245,245,245,0.2)'
+    }
+  }, link.name, /*#__PURE__*/React.createElement("svg", {
+    className: "w-3.5 h-3.5",
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24"
+  }, /*#__PURE__*/React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 2,
+    d: "M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "flex gap-3"
+  }, !completed.has(currentCard.id) && !showStamp ? /*#__PURE__*/React.createElement("button", {
+    onClick: markDone,
+    className: "flex-1 py-3.5 text-sm uppercase transition-all hover:scale-[1.02] active:scale-[0.98]",
+    style: {
+      borderRadius: '2px',
+      letterSpacing: '0.1em',
+      background: '#EF4C31',
+      color: '#F5F5F5',
+      boxShadow: '0 10px 30px rgba(239,76,49,0.3)'
+    }
+  }, "I tried this! \u2726") : showStamp ? /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 py-3.5 text-sm uppercase text-center",
+    style: {
+      borderRadius: '2px',
+      letterSpacing: '0.1em',
+      background: 'rgba(239,76,49,0.12)',
+      color: '#EF4C31',
+      border: '1px solid rgba(239,76,49,0.4)'
+    }
+  }, "\u2726 Done! \u2726") : /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 py-3.5 text-sm uppercase text-center",
+    style: {
+      borderRadius: '2px',
+      letterSpacing: '0.1em',
+      background: 'rgba(245,245,245,0.04)',
+      color: 'rgba(245,245,245,0.4)',
+      border: '1px solid rgba(245,245,245,0.1)'
+    }
+  }, "Completed \u2713"), !allDone && /*#__PURE__*/React.createElement("button", {
+    onClick: drawCard,
+    className: "flex-1 py-3.5 text-sm uppercase transition-all hover:scale-[1.02] active:scale-[0.98] hover:bg-white/10",
+    style: {
+      borderRadius: '2px',
+      letterSpacing: '0.1em',
+      background: 'transparent',
+      color: '#F5F5F5',
+      border: '1px solid rgba(245,245,245,0.25)'
+    }
+  }, "Draw Again"))))), !allDone && /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAllCards(true),
+    className: "mt-6 text-xs uppercase transition-all hover:scale-105",
+    style: {
+      color: 'rgba(245,245,245,0.45)',
+      letterSpacing: '0.15em'
+    }
+  }, "See all experiments \u2192"), allDone && /*#__PURE__*/React.createElement("div", {
+    className: "mt-8 text-center animate-fadeIn"
+  }, /*#__PURE__*/React.createElement(Eye, {
+    className: "w-16 h-10 mx-auto mb-4",
+    style: {
+      color: '#FE63D9',
+      filter: 'drop-shadow(0 0 12px rgba(254,99,217,0.6))'
+    }
+  }), /*#__PURE__*/React.createElement("h3", {
+    className: "text-2xl mb-2",
+    style: {
+      fontFamily: "'Parafina-Medium', Georgia, serif",
+      fontWeight: 500,
+      letterSpacing: '0.06em',
+      color: '#F5F5F5'
+    }
+  }, "You tried them all!"), /*#__PURE__*/React.createElement("p", {
+    style: {
+      color: 'rgba(245,245,245,0.6)',
+      fontStyle: 'italic'
+    }
+  }, "Your special thing is playing.")), /*#__PURE__*/React.createElement("footer", {
+    className: "mt-10 text-center"
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "text-xs",
+    style: {
+      color: 'rgba(245,245,245,0.3)',
+      letterSpacing: '0.05em'
+    }
+  }, "Crafted with care by", ' ', /*#__PURE__*/React.createElement("a", {
+    href: "https://queenofswords.co",
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "hover:opacity-70 transition-opacity",
+    style: {
+      color: 'rgba(254,99,217,0.7)'
+    }
+  }, "Queen of Swords")))), showAllCards && /*#__PURE__*/React.createElement("div", {
+    className: "fixed inset-0 z-50 overflow-y-auto",
+    style: {
+      background: 'rgba(0,0,0,0.92)',
+      backdropFilter: 'blur(8px)'
+    },
+    onClick: () => setShowAllCards(false)
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "min-h-screen px-4 py-8"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "max-w-2xl mx-auto overflow-hidden",
+    style: {
+      borderRadius: '12px',
+      background: 'linear-gradient(165deg, rgba(18,12,30,0.96) 0%, rgba(5,3,10,0.98) 100%)',
+      boxShadow: '0 25px 50px rgba(0,0,0,0.7)',
+      border: '1px solid rgba(245,245,245,0.15)'
+    },
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "sticky top-0 z-10 p-5 flex items-center justify-between",
+    style: {
+      background: 'rgba(8,5,15,0.95)',
+      borderBottom: '1px solid rgba(245,245,245,0.1)',
+      backdropFilter: 'blur(10px)'
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h2", {
+    className: "text-2xl",
+    style: {
+      fontFamily: "'Parafina-Medium', Georgia, serif",
+      fontWeight: 500,
+      letterSpacing: '0.06em',
+      color: '#F5F5F5'
+    }
+  }, "All Experiments"), /*#__PURE__*/React.createElement("p", {
+    className: "text-xs uppercase mt-1",
+    style: {
+      color: 'rgba(245,245,245,0.45)',
+      letterSpacing: '0.15em'
+    }
+  }, completed.size, " of ", experiments.length, " completed")), /*#__PURE__*/React.createElement("button", {
+    onClick: () => setShowAllCards(false),
+    className: "w-10 h-10 flex items-center justify-center transition-colors",
+    style: {
+      borderRadius: '2px',
+      background: 'rgba(245,245,245,0.08)',
+      border: '1px solid rgba(245,245,245,0.15)',
+      color: '#F5F5F5'
+    }
+  }, /*#__PURE__*/React.createElement("svg", {
+    className: "w-6 h-6",
+    fill: "none",
+    stroke: "currentColor",
+    viewBox: "0 0 24 24"
+  }, /*#__PURE__*/React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    strokeWidth: 2,
+    d: "M6 18L18 6M6 6l12 12"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "p-4 space-y-3"
+  }, experiments.map(experiment => {
+    const isDone = completed.has(experiment.id);
+    return /*#__PURE__*/React.createElement("button", {
+      key: experiment.id,
+      onClick: () => {
+        setCurrentCard(experiment);
+        setShowAllCards(false);
+        setShowStamp(false);
+      },
+      className: `w-full text-left p-4 transition-all hover:scale-[1.01] active:scale-[0.99] ${isDone ? 'opacity-60' : ''}`,
+      style: {
+        borderRadius: '4px',
+        background: experiment.special ? 'rgba(254,99,217,0.08)' : 'rgba(245,245,245,0.04)',
+        border: experiment.special ? '1px solid rgba(254,99,217,0.35)' : '1px solid rgba(245,245,245,0.1)'
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-start gap-3"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center mt-0.5",
+      style: {
+        borderColor: isDone ? '#EF4C31' : 'rgba(245,245,245,0.2)',
+        background: isDone ? '#EF4C31' : 'transparent'
+      }
+    }, isDone && /*#__PURE__*/React.createElement("svg", {
+      className: "w-3.5 h-3.5 text-white",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: 3,
+      viewBox: "0 0 24 24"
+    }, /*#__PURE__*/React.createElement("path", {
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      d: "M5 13l4 4L19 7"
+    }))), /*#__PURE__*/React.createElement("div", {
+      className: "flex-1 min-w-0"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "flex items-center gap-2"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "text-xs",
+      style: {
+        color: experiment.special ? '#FE63D9' : 'rgba(245,245,245,0.4)'
+      }
+    }, experiment.special ? '✦' : `${experiment.id}.`), /*#__PURE__*/React.createElement("h3", {
+      className: "font-medium truncate",
+      style: {
+        fontFamily: "'DM Mono', monospace",
+        color: '#F5F5F5'
+      }
+    }, experiment.title)), /*#__PURE__*/React.createElement("p", {
+      className: "text-sm mt-1 line-clamp-2",
+      style: {
+        color: 'rgba(245,245,245,0.5)'
+      }
+    }, experiment.description))));
+  }))))));
+}
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(/*#__PURE__*/React.createElement(QueenOfSwordsDeck, null));
