@@ -12,13 +12,14 @@
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://static1.squarespace.com/static/6999f1af05e7390427eb3a8b/t/69a32cdd9df9c33ba1ead3c6/1772301533784/Queen+of+Swords_social+image.png?format=1500w">
 
-    <!-- React -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- React (version-pinned so "latest" can't break the live page) -->
+    <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+    <!-- Babel pinned to 7.x — Babel 8 broke in-browser JSX transpilation (caused the blank page) -->
+    <script src="https://unpkg.com/@babel/standalone@7.29.7/babel.min.js"></script>
 
     <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
